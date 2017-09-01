@@ -28,7 +28,7 @@ class SelectelAdapter extends AbstractAdapter
      */
     public function has($path)
     {
-        return true;
+        return false;
     }
 
     /**
@@ -36,7 +36,7 @@ class SelectelAdapter extends AbstractAdapter
      */
     public function write($path, $contents, Config $config)
     {
-        throw new \Exception('should be implemented');
+        return $this->container->uploadFromString($path, $contents);
     }
 
     /**
