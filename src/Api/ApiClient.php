@@ -84,13 +84,10 @@ class ApiClient implements ApiClientContract
         if (!is_null($this->httpClient)) {
             return $this->httpClient;
         }
+        $client = new Client();
+        $client->setDefaultOption('headers', array('X-Auth-Token'  => $this->token()));
 
-        return $this->httpClient = new Client([
-            'base_uri' => $this->storageUrl(),
-            'headers' => [
-                'X-Auth-Token' => $this->token(),
-            ],
-        ]);
+        return $client;
     }
 
     /**
@@ -144,9 +141,8 @@ class ApiClient implements ApiClientContract
         if (!$response->hasHeader('X-Storage-Url')) {
             throw new RuntimeException('Storage URL is missing.', 500);
         }
-
-        $this->token = $response->getHeaderLine('X-Auth-Token');
-        $this->storageUrl = $response->getHeaderLine('X-Storage-Url');
+        $this->token = $response->getHeader('X-Auth-Token');
+        $this->storageUrl = $response->getHeader('X-Storage-Url');
     }
 
     /**
@@ -161,7 +157,7 @@ class ApiClient implements ApiClientContract
         $client = new Client();
 
         try {
-            $response = $client->request('GET', static::AUTH_URL, [
+            $response = $client->get( static::AUTH_URL, [
                 'headers' => [
                     'X-Auth-User' => $this->username,
                     'X-Auth-Key' => $this->password,
@@ -194,13 +190,16 @@ class ApiClient implements ApiClientContract
         }
 
         $params['query']['format'] = 'json';
-
         try {
-            $response = $this->getHttpClient()->request($method, $url, $params);
+            $response = $this->getHttpClient()->{strtolower($method)}($this->getUrl($url), $params);
         } catch (RequestException $e) {
             return $e->getResponse();
         }
 
         return $response;
+    }
+
+    public function getUrl($url) {
+        return $this->storageUrl() . $url;
     }
 }
