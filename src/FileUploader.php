@@ -21,7 +21,7 @@ class FileUploader implements FileUploaderContract
      *
      * @return string
      */
-    public function upload(ApiClientContract $api, $path, $body, array $params = [], $verifyChecksum = true)
+    public function upload( $api, $path, $body, array $params = [], $verifyChecksum = true)
     {
         $response = $api->request('PUT', $path, [
             'headers' => $this->convertUploadParamsToHeaders($body, $params, $verifyChecksum),
