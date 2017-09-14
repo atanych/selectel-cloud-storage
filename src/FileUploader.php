@@ -49,9 +49,9 @@ class FileUploader implements FileUploaderContract
     {
         $headers = [];
 
-        if ($verifyChecksum) {
-            $headers['ETag'] = md5($body);
-        }
+//        if ($verifyChecksum) {
+//            $headers['ETag'] = md5($body);
+//        }
 
         $availableParams = [
             'contentType' => 'Content-Type',
